@@ -103,12 +103,12 @@ hist(sumsteps$`sum(steps)`,)
 s.mean<-mean(sumsteps$`sum(steps)`,na.rm=TRUE)
 
 ```
-The mean is `r s.mean`.
+The mean is 1.076618910^{4}.
 
 ```{r median}
 r.median<-median(sumsteps$`sum(steps)`,na.rm=TRUE)
 ```
-The median is `r r.median`.
+The median is 10765.
 
 
 ### What is the average daily activity pattern?
@@ -126,7 +126,7 @@ maxsteps <-summarise(by_interval,max(steps))
 maxrow<-which(grepl(maxsteps,by_interval$steps))
 
 ```
-In this data, the maximum of steps appears in the `r by_interval[maxrow,1]`th 5-minute interval.
+In this data, the maximum of steps appears in the 835th 5-minute interval.
 
 
 ### Imputing missing values
@@ -135,7 +135,7 @@ In this data, the maximum of steps appears in the `r by_interval[maxrow,1]`th 5-
 ```{r the number of NA,results="hide"}
 na.sum<-sum(is.na(pattern))
 ```
-There are `r na.sum` raws including missing value.
+There are  2304 raws including missing value.
 
 - Filling in all of the missing values in the dataset
 
@@ -176,13 +176,13 @@ total_dif<-sum(totalsteps_new$steps)-sum(totalsteps_new$steps)
 
 
 ```
-1. The mean of original data is `r meansteps`
-2. The mean of imputed data is `r meansteps_new`
-3. The median of original data is `r mediansteps`
-4. The median of imputed data is `r mediansteps_new`
-5. The mean difference is `r mean_dif`.
-6. The median difference is `r median_dif`.
-7. The total steps difference is `r total_dif`.
+1. The mean of original data is  1.076618910^{4}.
+2. The mean of imputed data is 1.076618910^{4}.
+3. The median of original data is 10765.
+4. The median of imputed data is 1.076618910^{4}.
+5. The mean difference is 0.
+6. The median difference is 1.1886792.
+7. The total steps difference is 0.
 
 
 ### Are there differences in activity patterns between weekdays and weekends?
