@@ -30,7 +30,7 @@ sumsteps <-summarise(data,sum(steps))
 hist(sumsteps$`sum(steps)`,)
 ```
 
-![](Course_Project_files/figure-markdown_github/histogram-1.png)
+![image1](instructions_fig/image1.png) 
 
 -   Calculate and report the mean and median of the total number of steps taken per day
 
@@ -56,7 +56,7 @@ by_interval <-aggregate(steps ~interval, data=pattern,FUN=mean)
 plot(by_interval,type="l")
 ```
 
-![](Course_Project_files/figure-markdown_github/daily%20activity-1.png)
+![image2](instructions_fig/image2.png) 
 
 ``` r
 maxsteps <-summarise(by_interval,max(steps))
@@ -103,7 +103,7 @@ hist(totalsteps$steps,col="black",add=T)
 legend("topright",c("original","imputed"),col=c("black","red"),lwd=10)
 ```
 
-![](Course_Project_files/figure-markdown_github/steps%20taken%20each%20day-1.png)
+![image3](instructions_fig/image3.png) 
 
 -   The difference between original and imputed data
 
@@ -144,4 +144,4 @@ pattern_weekday<-aggregate(steps~interval+day,newdata,mean)
 xyplot(pattern_weekday$steps~pattern_weekday$interval|pattern_weekday$day,main="Comparison between weekdays and weekend",xlab="Interval",ylab="Steps",layout=c(1,2),type="l")
 ```
 
-![](Course_Project_files/figure-markdown_github/pattern_weekdays-1.png)
+![image4](instructions_fig/image4.png) 
