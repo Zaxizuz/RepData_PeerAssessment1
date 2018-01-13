@@ -36,6 +36,7 @@ sumsteps <-summarise(data,sum(steps))
 hist(sumsteps$`sum(steps)`,)
 ```
 
+![image1](instructions_fig/image1.png) 
 - Calculate and report the mean and median of the total number of steps taken per day
 
 ```{r mean,results="hide"}
@@ -58,6 +59,7 @@ by_interval <-aggregate(steps ~interval, data=pattern,FUN=mean)
 plot(by_interval,type="l")
 
 ```
+![image2](instructions_fig/image2.png) 
 
 ```{r maximum,results="hide"}
 maxsteps <-summarise(by_interval,max(steps))
@@ -96,7 +98,7 @@ hist(totalsteps$steps,col="black",add=T)
 legend("topright",c("original","imputed"),col=c("black","red"),lwd=10)
 
 ```
-
+![image3](instructions_fig/image3.png) 
 - The difference between original and imputed data
 
 ```{r differences}
@@ -130,3 +132,4 @@ newdata$day<-factor((weekdays(newdata$date) %in% weekdays1),levels=c(FALSE,TRUE)
 pattern_weekday<-aggregate(steps~interval+day,newdata,mean)
 xyplot(pattern_weekday$steps~pattern_weekday$interval|pattern_weekday$day,main="Comparison between weekdays and weekend",xlab="Interval",ylab="Steps",layout=c(1,2),type="l")
 ```
+![image4](instructions_fig/image4.png) 
