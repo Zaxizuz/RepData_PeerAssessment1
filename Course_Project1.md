@@ -128,7 +128,7 @@ total_dif<-sum(totalsteps_new$steps)-sum(totalsteps_new$steps)
 comparing the patterns between weekdays and weekend
 ---------------------------------------------------
 
-``` r
+``` r 
 newdata$date<-as.Date(newdata$date)
 ```
 
