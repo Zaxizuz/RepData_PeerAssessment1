@@ -76,62 +76,129 @@ assignment so you do not have to download the data separately.
 
 ### Loading and preprocessing the data
 
-Show any code that is needed to
-
-1. Load the data (i.e. `read.csv()`)
-
-2. Process/transform the data (if necessary) into a format suitable for your analysis
-
+```{r load}
+rawdata <-read.csv("activity.csv")
+```
 
 ### What is mean total number of steps taken per day?
 
-For this part of the assignment, you can ignore the missing values in
-the dataset.
+- Calculate the total number of steps taken per day
 
-1. Make a histogram of the total number of steps taken each day
+```{r sum}
 
-2. Calculate and report the **mean** and **median** total number of steps taken per day
+data <-group_by(rawdata,date)
+sumsteps <-summarise(data,sum(steps))
+```
+
+- Make a histogram of the total number of steps taken each day
+
+```{r histogram}
+hist(sumsteps$`sum(steps)`,)
+```
+
+![image1](instructions_fig/image1.png) 
+- Calculate and report the mean and median of the total number of steps taken per day
+
+```{r mean,results="hide"}
+s.mean<-mean(sumsteps$`sum(steps)`,na.rm=TRUE)
+
+```
+The mean is `r s.mean`.
+
+```{r median}
+r.median<-median(sumsteps$`sum(steps)`,na.rm=TRUE)
+```
+The median is `r r.median`.
 
 
 ### What is the average daily activity pattern?
 
-1. Make a time series plot (i.e. `type = "l"`) of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
+```{r daily activity}
+pattern <-rawdata[,c(1,3)]
+pattern$interval <-as.numeric(pattern$interval)
+by_interval <-aggregate(steps ~interval, data=pattern,FUN=mean)
+plot(by_interval,type="l")
 
-2. Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
+```
+![image2](instructions_fig/image2.png) 
+```{r maximum,results="hide"}
+maxsteps <-summarise(by_interval,max(steps))
+maxrow<-which(grepl(maxsteps,by_interval$steps))
+
+```
+In this data, the maximum of steps appears in the `r by_interval[maxrow,1]`th 5-minute interval.
 
 
 ### Imputing missing values
 
-Note that there are a number of days/intervals where there are missing
-values (coded as `NA`). The presence of missing days may introduce
-bias into some calculations or summaries of the data.
+- The total number of raws including missing value
+```{r the number of NA,results="hide"}
+na.sum<-sum(is.na(pattern))
+```
+There are `r na.sum` raws including missing value.
 
-1. Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with `NA`s)
+- Filling in all of the missing values in the dataset
 
-2. Devise a strategy for filling in all of the missing values in the dataset. The strategy does not need to be sophisticated. For example, you could use the mean/median for that day, or the mean for that 5-minute interval, etc.
+The strategy is to replace missing value with the average steps of the interval.
+```{r filling,error=FALSE}
+averagesteps<-aggregate(steps~interval,rawdata,mean)
+newdata<-transform(rawdata,steps=ifelse(is.na(rawdata$steps),averagesteps$steps[match(rawdata$interval,averagesteps$interval)],rawdata$steps))
+```
+##compare imputed data with original data
 
-3. Create a new dataset that is equal to the original dataset but with the missing data filled in.
+- Calculate the average steps
+```{r comparing}
+totalsteps<-aggregate(steps~date,rawdata,sum)
+totalsteps_new<-aggregate(steps~date,newdata,sum)
+```
+- Visualising the comparison
 
-4. Make a histogram of the total number of steps taken each day and Calculate and report the **mean** and **median** total number of steps taken per day. Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?
+```{r steps taken each day}
+
+hist(totalsteps_new$steps,col="red",xlab="Number of Steps",main="Steps taken each day")
+hist(totalsteps$steps,col="black",add=T)
+legend("topright",c("original","imputed"),col=c("black","red"),lwd=10)
+
+```
+
+![image3](instructions_fig/image3.png) 
+
+- The difference between original and imputed data
+
+```{r differences}
+meansteps<-mean(totalsteps$steps)
+mediansteps<-median(totalsteps$steps)
+meansteps_new<-mean(totalsteps_new$steps)
+mediansteps_new<-median(totalsteps_new$steps)
+mean_dif <-meansteps_new-meansteps
+median_dif<-mediansteps_new-mediansteps
+total_dif<-sum(totalsteps_new$steps)-sum(totalsteps_new$steps)
+
+
+```
+1. The mean of original data is `r meansteps`
+2. The mean of imputed data is `r meansteps_new`
+3. The median of original data is `r mediansteps`
+4. The median of imputed data is `r mediansteps_new`
+5. The mean difference is `r mean_dif`.
+6. The median difference is `r median_dif`.
+7. The total steps difference is `r total_dif`.
 
 
 ### Are there differences in activity patterns between weekdays and weekends?
 
-For this part the `weekdays()` function may be of some help here. Use
-the dataset with the filled-in missing values for this part.
+```{r pattern_weekdays}
 
-1. Create a new factor variable in the dataset with two levels -- "weekday" and "weekend" indicating whether a given date is a weekday or weekend day.
+newdata$date<-as.Date(newdata$date)
+newdata$interval<-as.numeric(newdata$interval)
 
-1. Make a panel plot containing a time series plot (i.e. `type = "l"`) of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis). The plot should look something like the following, which was created using **simulated data**:
+weekdays1<-c("Monday","Tuesday","Wednesday","Thursday","Friday")
+newdata$day<-factor((weekdays(newdata$date) %in% weekdays1),levels=c(FALSE,TRUE),labels = c("weekend","weekdays"))
+pattern_weekday<-aggregate(steps~interval+day,newdata,mean)
+xyplot(pattern_weekday$steps~pattern_weekday$interval|pattern_weekday$day,main="Comparison between weekdays and weekend",xlab="Interval",ylab="Steps",layout=c(1,2),type="l")
+```
 
-![Sample panel plot](instructions_fig/sample_panelplot.png) 
-
-
-**Your plot will look different from the one above** because you will
-be using the activity monitor data. Note that the above plot was made
-using the lattice system but you can make the same version of the plot
-using any plotting system you choose.
-
+![image4](instructions_fig/image4.png)
 
 ## Submitting the Assignment
 
