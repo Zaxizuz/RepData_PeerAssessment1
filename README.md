@@ -206,5 +206,4 @@ xyplot(pattern_weekday$steps~pattern_weekday$interval|pattern_weekday$day,main="
 ```r
 https://github.com/Zaxizuz/RepData_PeerAssessment1
 
-7c376cc5447f11537f8740af8e07d6facc3d9645
 ```
